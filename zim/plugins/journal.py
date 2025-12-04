@@ -269,7 +269,7 @@ class JournalNotebookViewExtension(NotebookViewExtension):
 		else:
 			return True
 
-	@action(_('To_day'), accelerator='<Alt>D', menuhints='go') # T: menu item
+	@action(_('To_day'), accelerator='<Alt>S', menuhints='go') # T: menu item
 	def go_page_today(self):
 		today = datetime.date.today()
 		path = self.plugin.path_from_date(self.pageview.notebook, today)
