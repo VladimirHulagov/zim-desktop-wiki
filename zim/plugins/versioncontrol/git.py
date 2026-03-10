@@ -242,3 +242,44 @@ class GITApplicationBackend(VCSApplicationBase):
 			return self.pipe(['status', '--porcelain'])
 		else:
 			return self.pipe(['status'])
+
+	def branch(self, name=None, delete=False, force=False):
+		"""
+		Runs: git branch {{NAME}}
+		"""
+		params = ['branch']
+		if delete:
+			params.append('-D' if force else '-d')
+		if name:
+			params.append(name)
+		return self.run(params)
+
+	def checkout(self, name, force=False, create=False):
+		"""
+		Runs: git checkout {{NAME}}
+		"""
+		params = ['checkout']
+		if force:
+			params.append('-f')
+		if create:
+			params.append('-b')
+		params.append(name)
+		return self.run(params)
+
+	def merge(self, name, message=None, strategy=None):
+		"""
+		Runs: git merge {{NAME}}
+		"""
+		params = ['merge']
+		if message:
+			params.extend(['-m', message])
+		if strategy:
+			params.extend(['-s', strategy])
+		params.append(name)
+		return self.run(params)
+
+	def get_current_branch(self):
+		"""
+		Runs: git rev-parse --abbrev-ref HEAD
+		"""
+		return self.pipe(['rev-parse', '--abbrev-ref', 'HEAD'])[0].strip()
