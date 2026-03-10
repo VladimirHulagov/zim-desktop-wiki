@@ -3403,9 +3403,11 @@ class TestPageViewActions(tests.TestCase):
 		self.assertTrue(pageview.find_bar.get_property('visible'))
 
 	def testShowFindWithQuery_FindNext_FindPrevious(self):
+		from zim.gui.pageview.find import FindQuery
+
 		pageview = setUpPageView(self.setUpNotebook(), 'test 123\n')
 		self.assertFalse(pageview.find_bar.get_property('visible'))
-		pageview.show_find('test')
+		pageview.show_find(FindQuery('test'))
 		self.assertTrue(pageview.find_bar.get_property('visible'))
 
 		pageview.find_next()
@@ -3551,7 +3553,7 @@ class TestPageviewDialogs(tests.TestCase):
 			}
 		)
 		file = tests.ZIM_DATA_FOLDER.file('zim.png')
-		buffer.insert_image_at_cursor(file, '../MYPATH/./data/zim.png')
+		buffer.insert_image_at_cursor(file, '../MYPATH/./data/zim.png', alt='Alternate Text')
 		dialog = EditImageDialog(None, buffer, notebook, Path(':some_page'))
 		self.assertEqual(dialog.form['width'], 48)
 		self.assertEqual(dialog.form['height'], 48)
@@ -3564,11 +3566,14 @@ class TestPageviewDialogs(tests.TestCase):
 		dialog.form['height'] = 24
 		self.assertEqual(dialog.form['width'], 24)
 		self.assertEqual(dialog.form['height'], 24)
+		self.assertEqual(dialog.form['alt'], 'Alternate Text')
+		dialog.form['alt'] = 'New alternate Text'
 		dialog.assert_response_ok()
 		iter = buffer.get_iter_at_offset(0)
 		imagedata = buffer.get_image_data(iter)
 		self.assertEqual(imagedata, {
 			'src': './data/zim.png', # preserve relative path
+			'alt': 'New alternate Text',
 			'height': 24,
 		})
 		self.assertEqual(type(imagedata['height']).__name__, 'int')
